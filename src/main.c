@@ -32,7 +32,7 @@ loop(){
   disp_data[4]=7890;
 //  sei();//habilita las interrupciones
 
-  //delay(5);
+  //delay(1);
 
   refresh_disp(&disp_data[0]);
 
