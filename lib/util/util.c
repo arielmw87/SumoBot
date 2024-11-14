@@ -43,6 +43,12 @@ ISR(TIMER0_COMPA_vect){
 //---------------------------------------
 void config_io(void){
 
-  DDRF |= (1<<PF4) | (1<<PF5) | (1<<PF6) | (1<<PF7) ;
-  DDRB |= (1<<PB1) | (1<<PB2) | (1<<PB3) ;
+  //estos los use en simulide con el nano
+  DDRB |= (1<<PB0);
+  DDRD |= (1<<PD2) | (1<<PD3) | (1<<PD4) | (1<<PD5) | (1<<PD6) | (1<<PD7) ;
+
+
+  //estos los use en el pro micro
+  //DDRB |= (1<<PB1) | (1<<PB2) | (1<<PB3) ;
+  //DDRF |= (1<<PF4) | (1<<PF5) | (1<<PF6) | (1<<PF7) ;
 }
