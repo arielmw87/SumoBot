@@ -18,7 +18,7 @@ void loop(){
   Serial.println(get_s2_centimeters());
   Serial.println(get_s3_centimeters());
   Serial.println("--------------------");
-  delay(500);
+  delay(300);
 
 
 }
