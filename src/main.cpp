@@ -7,7 +7,7 @@
 void setup(){
 
   config_io();     // configuro las entradas y salidas
-  config_ultrasonic_measure();
+  config_ultrasonic_measure(DISTANCE_MODE_CONTINUOUS);
   sei();
   Serial.begin(9600);
   

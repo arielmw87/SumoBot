@@ -13,18 +13,16 @@ en la IRQ de cambio de nivel, se detecta el flanco, y se guarda un timestamp par
 */
 
 // variables de estado de entradas para deteccion de flanco:
-uint8_t last_s1_state, last_s2_state, last_s3_state;
-uint8_t s1_state, s2_state, s3_state;
+uint8_t last_state;
 // variables para timestamp de flancos
-uint16_t s1_rise_time, s1_fall_time;
-uint16_t s2_rise_time, s2_fall_time;
-uint16_t s3_rise_time, s3_fall_time;
+uint16_t rise_time, fall_time;
 // variables de salida de medicion:
 uint16_t s1_distance;
 uint16_t s2_distance;
 uint16_t s3_distance;
 
 uint8_t channel = 1;
+uint8_t measure_mode=0, measure_state=NONE;
 //---------------------------------------
 // measuring result getters
 //---------------------------------------
@@ -43,10 +41,12 @@ uint16_t get_s3_centimeters(void){
 }
 //---------------------------------------
 //---------------------------------------
-void config_ultrasonic_measure(void)
+void config_ultrasonic_measure(uint8_t mode)
 {
+  measure_mode = mode;
   config_timer1();
   config_IO_change_interrupt(1);
+
 }
 //---------------------------------------
 //---------------------------------------
@@ -116,44 +116,55 @@ void config_IO_change_interrupt(uint8_t channel)
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-ISR(TIMER1_COMPA_vect)
-{
-  // esto se da cada 100mSeg
+void distance_read(uint8_t readchannel){
 
 
-  // cambio de estado el led del arduino para que titile al compas de la medicion.
+  TCNT1=0; //reinicio TIMER 1
 
-  // calculo distancias a partir de las ultimas mediciones:
-  if (channel == 1)
-  {
-    s1_distance = (s1_fall_time - s1_rise_time);
-    last_s1_state = 0;
-    s1_state = 0;
-    channel=2;
+  measure_state = MEASURING;
 
-  }
-  else if (channel == 2)
-  {
-    s2_distance = (s2_fall_time - s2_rise_time);
-    last_s2_state = 0;
-    s2_state = 0;
-    channel=3;
-
-  }
-  else if (channel == 3)
-  {
-    s3_distance = (s3_fall_time - s3_rise_time);
-    last_s3_state = 0;
-    s3_state = 0;
-    channel=1;
-  }
-  
-  config_IO_change_interrupt(channel);
+  channel = readchannel; 
+  last_state = 0;
+  config_IO_change_interrupt(readchannel);
 
   // trigger next ultrasonic measure
   bit_set(PORTC, 0);
   _delay_us(15);
   bit_clear(PORTC, 0);
+
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+uint8_t distance_read_done(){
+  return measure_state;
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+ISR(TIMER1_COMPA_vect)
+{
+  // esto se da cada 100mSeg
+
+  // calculo distancias a partir de las ultimas mediciones:
+  if (channel == 1){ s1_distance = (fall_time - rise_time); } else
+  if (channel == 2){ s2_distance = (fall_time - rise_time); } else
+  if (channel == 3){ s3_distance = (fall_time - rise_time); }
+  measure_state = DONE;
+  
+  if(measure_mode == DISTANCE_MODE_CONTINUOUS){
+    //defino proxima medicion:    
+    channel++;
+    if( channel > 3 ){ channel = 1; }
+    
+    last_state = 0;
+
+    config_IO_change_interrupt(channel);
+    
+    // trigger next ultrasonic measure
+    bit_set(PORTC, 0);
+    _delay_us(15);
+    bit_clear(PORTC, 0);
+  }
 }
 
 //------------------------------------------------------------------------------
@@ -162,63 +173,31 @@ ISR(TIMER1_COMPA_vect)
 ISR(PCINT1_vect)
 {
   uint16_t time = TCNT1;
-
-  if (channel == 3)
-  {
-    // capturo valor de entradas
-    s3_state = bit_is_set(PINC, PC3) ? 1 : 0;
-    // ascendente sensor 3
-    if (s3_state == 1 && last_s3_state == 0)
-    {
-      bit_set(PINB, PB5); // toogle led
-      s3_rise_time = time;
-    }
-
-    // descendente sensor 3
-    if (s3_state == 0 && last_s3_state == 1)
-    {
-      bit_set(PINB, PB5); // toogle led
-      s3_fall_time = time;
-    }
-    last_s3_state = s3_state;
-  }else
-  //------------------------------------------
-  if (channel == 1)
-  {
-    // capturo valor de entradas
-    s1_state = bit_is_set(PINC, PC1) ? 1 : 0;
-    // ascendente sensor 1
-    if (s1_state == 1 && last_s1_state == 0)
-    {
-      s1_rise_time = time;
-    }
-    // descendente sensor 1
-    if (s1_state == 0 && last_s1_state == 1)
-    {
-      s1_fall_time = time;
-    }
-    last_s1_state = s1_state;
-  }else
+  uint8_t state;
 
   //------------------------------------------
-  if (channel == 2)
+  // capturo valor de entradas
+  //if (channel == 1){ state = bit_is_set(PINC, PC1) ? 1 : 0; }else
+  //if (channel == 2){ state = bit_is_set(PINC, PC2) ? 1 : 0; }else
+  //if (channel == 3){ state = bit_is_set(PINC, PC3) ? 1 : 0; }
+  //------------------------------------------
+  state = bit_is_set(PINC, channel) ? 1 : 0;
+
+  // flanco ascendente sensor
+  if (state == 1 && last_state == 0)
   {
-    // capturo valor de entradas
-    s2_state = bit_is_set(PINC, PC2) ? 1 : 0;
-    // ascendente sensor 2
-    if (s2_state == 1 && last_s2_state == 0)
-    {
-      s2_rise_time = time;
-    }
-    // descendente sensor 2
-    if (s2_state == 0 && last_s2_state == 1)
-    {
-      s2_fall_time = time;
-    }
-    last_s2_state = s2_state;
+    rise_time = time;
   }
 
-  //------------------------------------------
+  // flnco descendente sensor
+  if (state == 0 && last_state == 1)
+  {
+    fall_time = time;
+  }
+  last_state = state;
+
+
+
 }
 
 //------------------------------------------------------------------------------
