@@ -1,4 +1,4 @@
-#include <ultrasonico.h>
+#include <sensores.h>
 /*
 
 la cosa es asi:
@@ -50,6 +50,27 @@ void config_ultrasonic_measure(void)
 }
 //---------------------------------------
 //---------------------------------------
+
+
+uint8_t get_floor_value( void ){
+
+  if( bit_is_set(PINC,PC5) ){
+    return 1;
+  }
+  return 0;
+
+}
+//---------------------------------------
+//---------------------------------------
+uint8_t get_audio_value( void ){
+
+  if( bit_is_set(PINB,PB1) ){
+    return 1;
+  }
+  return 0;
+
+}
+
 //---------------------------------------
 //---------------------------------------
 void config_timer1(void)

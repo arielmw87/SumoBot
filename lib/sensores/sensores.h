@@ -1,5 +1,5 @@
-#ifndef _ULTRASONICO_H_
-#define _ULTRASONICO_H_
+#ifndef __SENSORES_H_
+#define __SENSORES_H_
 
 #include <Arduino.h>
 #include <util.h>
@@ -11,6 +11,12 @@
 extern "C"
 {
 #endif
+
+//funciones para obtener valores de sensores:
+
+uint8_t get_floor_value( void );
+uint8_t get_audio_value( void );
+
 
 
 //funciones para obtener las mediciones
@@ -28,4 +34,4 @@ void config_IO_change_interrupt(uint8_t channel);
 }
 #endif
 
-#endif //_ULTRASONICO_H_
+#endif //__SENSORES_H_

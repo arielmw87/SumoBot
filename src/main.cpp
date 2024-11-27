@@ -2,7 +2,7 @@
 #include <util/delay.h> //para usar _delay_ms()
 #include <util.h>
 #include <display.h>
-#include <ultrasonico.h>
+#include <sensores.h>
 
 void setup(){
 
@@ -12,6 +12,7 @@ void setup(){
   Serial.begin(9600);
   
 }
+
 
 void loop(){
   Serial.println(get_s1_centimeters());
