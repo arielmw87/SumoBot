@@ -30,15 +30,15 @@ AUDIO: PB1
 
 
 //seria muy bueno cambiar los enable a PD5 y PD6, de esa manera ambos PWM se generarian con el TIMER 0
-Motor A:
-    Enable: PD3 (PWM)
+Motor R:
+    Enable: PD3 (PWM) -> PD6
     In 1:   PD2
     In 2:   PD4
 
-Motor B:
+Motor L:
     Enable: PD5 (PWM)
     In 3:   PD7
-    In 4:   PD6
+    In 4:   PD6 -> PD3
 
 */
 /*--------------------------------------------------------------*/
