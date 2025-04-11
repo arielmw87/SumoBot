@@ -10,66 +10,66 @@ void go(uint8_t direction, uint8_t speed)
     //---------------------
     case FORWARD:
         //MOTOR R
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD2);
         //MOTOR L
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD3);
+        bit_clear(PORTD,PD7);
 
         set_speed(speed,speed);
         break;
     //---------------------
     case BACKWARD:
         //MOTOR R
-        bit_clear(PORTD,PD2);
-        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD2);
         //MOTOR L
-        bit_clear(PORTD,PD2);
-        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD3);
+        bit_set(PORTD,PD7);
 
         set_speed(speed,speed);
         break;
     //---------------------
     case LEFT:
         //MOTOR R
-        bit_clear(PORTD,PD2);
-        bit_set(PORTD,PD4);
-        //MOTOR L
-        bit_set(PORTD,PD2);
         bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD2);
+        //MOTOR L
+        bit_set(PORTD,PD3);
+        bit_clear(PORTD,PD7);
         set_speed(speed,speed);
         break;
     //---------------------
     case RIGHT:
         //MOTOR R
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD2);
 
         //MOTOR L
-        bit_clear(PORTD,PD2);
-        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD3);
+        bit_set(PORTD,PD7);
 
         set_speed(speed,speed);
         break;
     //---------------------
     case FRONT_LEFT:
         //MOTOR R
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD2);
         //MOTOR L
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD3);
+        bit_clear(PORTD,PD7);
 
         set_speed(speed/2,speed);
         break;
     //---------------------
     case FRONT_RIGHT:
         //MOTOR R
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD4);
+        bit_clear(PORTD,PD2);
         //MOTOR L
-        bit_set(PORTD,PD2);
-        bit_clear(PORTD,PD4);
+        bit_set(PORTD,PD3);
+        bit_clear(PORTD,PD7);
 
         set_speed(speed,speed/2);
         break;
