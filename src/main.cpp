@@ -17,17 +17,21 @@ void setup(){
 
 void loop(){
 
+uint16_t front_dist=0;
 
-  Serial.println(get_s1_centimeters());
+front_dist =get_s1_centimeters();
+  Serial.println( front_dist);
   Serial.println(get_s2_centimeters());
   Serial.println(get_s3_centimeters());
   Serial.println("--------------------");
   
-  go(FORWARD,102);
-  delay(150);
-  
-  go(BACKWARD,102);
-  delay(150);
+
+  if(front_dist < 200){
+    go(BACKWARD,72);
+  }else if(front_dist > 600){
+    go(FORWARD,72);
+  }
+
 
 
 }
